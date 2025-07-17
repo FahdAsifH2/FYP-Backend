@@ -1,0 +1,12 @@
+POST http://localhost:5001/api/patients/putPatients
+Content-Type: application/json
+
+{
+  "Name": "aiza",
+  "Age": 10,
+  "Gravida": 1,
+  "BloodPreassure": "123/70",
+  "Height": "6.5ft",
+  "Diabetes": true,
+  "PreviousCSections": false
+}

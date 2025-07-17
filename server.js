@@ -3,21 +3,25 @@ import express from "express";
 import dotenv from "dotenv";
 import { sql } from "./db.js";
 import transactions from "./routes/transactions.js"
-import { initDB } from "./initDB.js";
+import { initDB, initPaitentsDB } from "./initDB.js";
+import patientsRoutes from "./routes/patientsRoutes.js"
 
 const app = express();
 dotenv.config();
 
-
-
 // Initialize database when starting the server
 initDB();
+
+//Paitents DB here
+initPaitentsDB()
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Middleware for routes
 app.use("/api/transactions", transactions);
+
+app.use("/api/patients",patientsRoutes);
 
 const PORT = process.env.PORT || 5001;
 
