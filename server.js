@@ -9,10 +9,8 @@ import patientsRoutes from "./routes/patientsRoutes.js"
 const app = express();
 dotenv.config();
 
-// Initialize database when starting the server
+// Initialize databases
 initDB();
-
-//Paitents DB here
 initPaitentsDB()
 
 // Middleware to parse JSON requests
@@ -20,8 +18,9 @@ app.use(express.json());
 
 // Middleware for routes
 app.use("/api/transactions", transactions);
-
 app.use("/api/patients",patientsRoutes);
+
+
 
 const PORT = process.env.PORT || 5001;
 
