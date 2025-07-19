@@ -18,6 +18,24 @@ const subtract = tool(async ({ a, b }) => a - b, {
   schema: z.object({ a: z.number(), b: z.number() }),
 });
 
+
+const notifyDoctor = tool(
+  async ({ issues, alert }) => {
+    console.log("🔔 Notified Doctor");
+    console.log("Issues:", issues);
+    console.log("Alert:", alert);
+    return "Doctor has been notified.";
+  },
+  {
+    name: "notifyDoctor",
+    description: "Notify the doctor about a patient issue or alert.",
+    schema: z.object({
+      issues: z.string(),
+      alert: z.string()
+    })
+  }
+);
+
 const multiply = tool(async ({ a, b }) => a * b, {
   name: "multiply",
   description: "Multiply two numbers",
@@ -40,7 +58,7 @@ const llm = new ChatOllama({
   temperature: 0,
 });
 
-const tools = [add, subtract, multiply, divide];
+const tools = [add, subtract, multiply, divide,notifyDoctor];
 const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
 const llmWithTools = llm.bindTools(tools);
 
@@ -50,7 +68,7 @@ async function llmCall(state) {
   const result = await llmWithTools.invoke([
     {
       role: "system",
-      content: "You are a helpful assistant tasked with performing arithmetic on a set of inputs."
+      content: "You are a helpful assistant tasked with performing arithmetic or notifying the doctor about the patient on a set of inputs."
     },
     ...state.messages
   ]);

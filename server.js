@@ -28,7 +28,7 @@ app.use("/api/patients", patientsRoutes);
 
 // ✅ Test the agent
 const testAgent = async () => {
-  const result = await runAgent("Add 3 and 4 than multiply with 5");
+  const result = await runAgent("Notify the doctor about high blood pressure and dizziness");
   console.log("AI Reply:", result);
 };
 
