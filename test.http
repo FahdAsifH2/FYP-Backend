@@ -10,3 +10,48 @@ Content-Type: application/json
   "Diabetes": true,
   "PreviousCSections": false
 }
+
+
+//normal 
+{
+  "Name": "Alina",
+  "Age": "24",
+  "Gravida": "1",
+  "BloodPreassure": "118",
+  "Height": "64",
+  "Diabetes": "95",
+  "PreviousCSections": "false"
+}
+
+//slight issue
+{
+  "Name": "Huma",
+  "Age": "30",
+  "Gravida": "2",
+  "BloodPreassure": "135",
+  "Height": "62",
+  "Diabetes": "160",
+  "PreviousCSections": "false"
+}
+
+//major issue
+{
+  "Name": "Kiran",
+  "Age": "38",
+  "Gravida": "5",
+  "BloodPreassure": "160",
+  "Height": "59",
+  "Diabetes": "240",
+  "PreviousCSections": "true"
+}
+
+//NEar Death
+{
+  "Name": "Rubina",
+  "Age": "42",
+  "Gravida": "6",
+  "BloodPreassure": "190",
+  "Height": "58",
+  "Diabetes": "320",
+  "PreviousCSections": "true"
+}

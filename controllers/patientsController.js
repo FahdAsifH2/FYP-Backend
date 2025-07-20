@@ -1,22 +1,50 @@
-import {sql} from "../db.js"
+import { sql } from "../db.js";
+import { runAgent } from "../agents/agentPrototype.js";
 
-export async function createPatient(req,res)
-{
- try
- {
-    const {Name,Age,Gravida,BloodPreassure,Height,Diabetes,PreviousCSections}= req.body
-      await sql 
+export async function createPatient(req, res) {
+  try {
+    const {
+      Name,
+      Age,
+      Gravida,
+      BloodPreassure,
+      Height,
+      Diabetes,
+      PreviousCSections,
+    } = req.body;
+
+
+    // ✅ Convert strings to boolean if needed
+    const diabetesBool = Diabetes === "true" || Diabetes === true;
+    const prevCSectionBool = PreviousCSections === "true" || PreviousCSections === true;
+
+    // ✅ Send data to AI agent first
+    const patientData = `Patient has bp ${BloodPreassure}, sugar ${Diabetes}, gravida ${Gravida}, age ${Age}, and height ${Height}.`;
+    const agentResult = await runAgent(patientData);
+    console.log("AI Reply:", agentResult);
+
     
-      ` INSERT INTO PATIENTS(name,age,gravida,blood_pressure,heighT,diabetes,previous_c_section)
-        VALUES(${Name},${Age},${Gravida},${BloodPreassure},${Height},${Diabetes},${PreviousCSections})
-        RETURNING *
-      `
-      res.status(201).json({messgae:"The paitent was added sucessfully"})
- }
- catch(error)
- {
-  
-    console.log("Error putting the patients into DB",error);
-    res.status(500).json({message:"Cannot put paitent into DB"})
- }
+    const result = await sql`
+      INSERT INTO PATIENTS(
+        name, age, gravida, blood_pressure, height, diabetes, previous_c_section
+      ) VALUES (
+        ${Name},
+        ${Age},
+        ${Gravida},
+        ${BloodPreassure},
+        ${Height},
+        ${diabetesBool},
+        ${prevCSectionBool}
+      )
+      RETURNING *
+    `;
+
+    res.status(201).json({
+      message: "The patient was added successfully",
+   
+    });
+  } catch (error) {
+    console.log(" Error putting the patient into DB", error);
+    res.status(500).json({ message: "Cannot put patient into DB" });
+  }
 }

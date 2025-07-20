@@ -68,7 +68,7 @@ async function llmCall(state) {
   const result = await llmWithTools.invoke([
     {
       role: "system",
-      content: "You are a helpful assistant tasked with performing arithmetic or notifying the doctor about the patient on a set of inputs."
+      content: "You are a helpful assistant tasked to notifying the doctor about the patient on a set of inputs nut only notify if the info is valid and the paitnet is in extreme situation else donot notify along with your own short analysis if diabetes is false than no sugar and vice versa also tell if you notified the doctor or not."
     },
     ...state.messages
   ]);
@@ -115,8 +115,11 @@ export async function runAgent(userMessage) {
     content: userMessage
   }];
   
+  console.log("  ")
+  console.log("  ")
   const result = await agentBuilder.invoke({ messages });
   const lastAIMessage = result.messages.findLast(msg => msg?.constructor?.name === "AIMessage");
-  
+  console.log("  ")
+  console.log("  ")
   return lastAIMessage?.content;
 }

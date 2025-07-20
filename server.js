@@ -26,14 +26,14 @@ app.use("/api/transactions", transactions);
 app.use("/api/patients", patientsRoutes);
 
 
-// ✅ Test the agent
-const testAgent = async () => {
-  const result = await runAgent("Notify the doctor about high blood pressure and dizziness");
-  console.log("AI Reply:", result);
-};
+// // ✅ Test the agent
+// const testAgent = async () => {
+//   const result = await runAgent("Notify the doctor about high blood pressure and dizziness");
+//   console.log("AI Reply:", result);
+// };
 
 // Run the agent test
-testAgent();
+//testAgent();
 
 
 
