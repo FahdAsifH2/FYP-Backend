@@ -4,52 +4,52 @@ import { z } from "zod";
 import { ChatOllama } from "@langchain/ollama";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
+import { allTools } from "./tools.js";
+// // ✅ Define tools
+// const add = tool(async ({ a, b }) => a + b, {
+//   name: "add",
+//   description: "Add two numbers",
+//   schema: z.object({ a: z.number(), b: z.number() }),
+// });
 
-// ✅ Define tools
-const add = tool(async ({ a, b }) => a + b, {
-  name: "add",
-  description: "Add two numbers",
-  schema: z.object({ a: z.number(), b: z.number() }),
-});
-
-const subtract = tool(async ({ a, b }) => a - b, {
-  name: "subtract",
-  description: "Subtract two numbers",
-  schema: z.object({ a: z.number(), b: z.number() }),
-});
+// const subtract = tool(async ({ a, b }) => a - b, {
+//   name: "subtract",
+//   description: "Subtract two numbers",
+//   schema: z.object({ a: z.number(), b: z.number() }),
+// });
 
 
-const notifyDoctor = tool(
-  async ({ issues, alert }) => {
-    console.log("🔔 Notified Doctor");
-    console.log("Issues:", issues);
-    console.log("Alert:", alert);
-    return "Doctor has been notified.";
-  },
-  {
-    name: "notifyDoctor",
-    description: "Notify the doctor about a patient issue or alert.",
-    schema: z.object({
-      issues: z.string(),
-      alert: z.string()
-    })
-  }
-);
+// const notifyDoctor = tool(
+//   async ({ issues, alert }) => {
+//     console.log("🔔 Notified Doctor");
+//     console.log("Issues:", issues);
+//     console.log("Alert:", alert);
+//     return "Doctor has been notified.";
+//   },
+//   {
+//     name: "notifyDoctor",
+//     description: "Notify the doctor about a patient issue or alert.",
+//     schema: z.object({
+//       issues: z.string(),
+//       alert: z.string()
+//     })
+//   }
+// );
 
-const multiply = tool(async ({ a, b }) => a * b, {
-  name: "multiply",
-  description: "Multiply two numbers",
-  schema: z.object({ a: z.number(), b: z.number() }),
-});
+// const multiply = tool(async ({ a, b }) => a * b, {
+//   name: "multiply",
+//   description: "Multiply two numbers",
+//   schema: z.object({ a: z.number(), b: z.number() }),
+// });
 
-const divide = tool(async ({ a, b }) => {
-  if (b === 0) throw new Error("Cannot divide by zero");
-  return a / b;
-}, {
-  name: "divide",
-  description: "Divide two numbers",
-  schema: z.object({ a: z.number(), b: z.number() }),
-});
+// const divide = tool(async ({ a, b }) => {
+//   if (b === 0) throw new Error("Cannot divide by zero");
+//   return a / b;
+// }, {
+//   name: "divide",
+//   description: "Divide two numbers",
+//   schema: z.object({ a: z.number(), b: z.number() }),
+// });
 
 // ✅ LLM + Tools
 const llm = new ChatOllama({
@@ -57,10 +57,14 @@ const llm = new ChatOllama({
   baseUrl: "http://localhost:11434",
   temperature: 0,
 });
+const tools = allTools; // ✅ No nesting
 
-const tools = [add, subtract, multiply, divide,notifyDoctor];
+// Only do this if needed later for object lookup
 const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
-const llmWithTools = llm.bindTools(tools);
+
+// For binding to the LLM, use the array (NOT the object)
+const llmWithTools = llm.bindTools(tools); // ✅ Correct
+
 
 // Nodes
 async function llmCall(state) {
