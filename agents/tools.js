@@ -36,6 +36,7 @@ export const divide = tool(async ({ a, b }) => {
 // Notify doctor tool
 export const notifyDoctor = tool(
   async ({ issues, alert }) => {
+    console.log("Doctor Notified")
     return "Doctor has been notified.";
   },
   {

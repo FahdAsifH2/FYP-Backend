@@ -48,3 +48,24 @@ export async function createPatient(req, res) {
     res.status(500).json({ message: "Cannot put patient into DB" });
   }
 }
+
+
+export async  function GetAllPatientByName(req,res)
+{
+   try
+   {
+     const result = await sql `
+     SELECT name FROM patients
+      `
+     console.log(result)
+     res.status(200).json({message:"Got all names from the DB",
+    data:result,
+    });
+   }
+
+   catch(error)
+   {
+     console.log("Err retriving all patient")
+     res.status(500).json({message:"Failed to retrive all patients"})
+   }
+}
