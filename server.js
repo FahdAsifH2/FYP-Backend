@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import { sql } from "./db.js";
 import transactions from "./routes/transactions.js";
 import patientsRoutes from "./routes/patientsRoutes.js";
-import { initDB, initPaitentsDB } from "./initDB.js";
+import {  initPaitentsDB } from "./initDB.js";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { ChatOllama } from "@langchain/ollama";
