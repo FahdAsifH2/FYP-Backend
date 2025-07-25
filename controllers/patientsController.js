@@ -22,9 +22,9 @@ export async function createPatient(req, res) {
     const prevCSectionBool = PreviousCSections === "true" || PreviousCSections === true;
 
     // ✅ Send data to AI agent first
-    // const patientData = `Patient has bp ${BloodPreassure}, sugar ${Diabetes}, gravida ${Gravida}, age ${Age}, and height ${Height}.`;
-    // const agentResult = await runAgent(patientData);
-    // console.log("AI Reply:", agentResult);
+    const patientData = `Patient has bp ${BloodPreassure}, sugar ${Diabetes}, gravida ${Gravida}, age ${Age}, and height ${Height}.`;
+    const agentResult = await runAgent(patientData);
+    console.log("AI Reply:", agentResult);
 
     
     const result = await sql`
@@ -42,6 +42,8 @@ export async function createPatient(req, res) {
       RETURNING *
     `;
 
+    console.log("Patient was added sucessfully")
+    console.log(" ")
     res.status(200).json({
       message: "The patient was added successfully",
    
