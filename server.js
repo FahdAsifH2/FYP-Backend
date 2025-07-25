@@ -20,7 +20,6 @@ const app = express();
 
 
 
-initDB();
 initPaitentsDB();
 
 // ✅ Middleware
