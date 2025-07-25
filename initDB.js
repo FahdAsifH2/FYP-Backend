@@ -1,6 +1,7 @@
 
 import { sql } from "./db.js";
 
+
   export async function initPaitentsDB()
   {
     try
@@ -10,12 +11,9 @@ import { sql } from "./db.js";
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             age INT NOT NULL,
-            weight INT NOT NULL,
-            height VARCHAR(20) ,
-            contact INT NOT NULL'',
             gravida INT NOT NULL,                   
             blood_pressure VARCHAR(20),              
-            gestationalAgeWeeks: VARCHAR(20),
+            heighT VARCHAR(20),
             diabetes BOOLEAN DEFAULT FALSE,          
             previous_c_section BOOLEAN DEFAULT FALSE
           );
