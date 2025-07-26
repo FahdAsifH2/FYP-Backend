@@ -74,3 +74,23 @@ export async  function GetAllPatientByName(req,res)
      res.status(500).json({message:"Failed to retrive all patients"})
    }
 }
+export async function getPatientDetailsByID(req, res) {
+  try {
+    const { id } = req.params;
+    console.log("ID received:", id); 
+    const result = await sql`
+      SELECT * FROM patients WHERE id = ${id}
+    `;
+
+    console.log("Got patient details");
+    console.log(result)
+
+    res.status(200).json({
+      message: "Sent the details",
+      data: result[0],
+    });
+  } catch (error) {
+    console.log("Err retrieving patient info", error);
+    res.status(500).json({ message: "Failed to retrieve patient info" });
+  }
+}
