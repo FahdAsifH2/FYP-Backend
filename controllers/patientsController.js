@@ -17,11 +17,10 @@ export async function createPatient(req, res) {
     } = req.body;
 
 
-    // ✅ Convert strings to boolean if needed
+
     const diabetesBool = Diabetes === "true" || Diabetes === true;
     const prevCSectionBool = PreviousCSections === "true" || PreviousCSections === true;
 
-    // ✅ Send data to AI agent first
     const patientData = `Patient has bp ${BloodPreassure}, sugar ${Diabetes}, gravida ${Gravida}, age ${Age}, and height ${Height}.`;
     const agentResult = await runAgent(patientData);
     console.log("AI Reply:", agentResult);
@@ -55,25 +54,27 @@ export async function createPatient(req, res) {
 }
 
 
-export async  function GetAllPatientByName(req,res)
-{
-   try
-   {
-     const result = await sql `
-     SELECT name FROM patients
-      `
-     console.log(result)
-     res.status(200).json({message:"Got all names from the DB",
-    data:result,
-    });
-   }
 
-   catch(error)
-   {
-     console.log("Err retriving all patient")
-     res.status(500).json({message:"Failed to retrive all patients"})
-   }
+export async function GetAllPatientByName(req, res) {
+  try {
+    // jub hum backend say patinet names mangwayen gay hum sth e id bhi mangwa len gay
+    const result = await sql`SELECT id, name FROM patients ORDER BY name`;
+    
+    console.log("Patients retrieved:", result);
+    
+    res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    console.log('Error getting patients:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to get patients' 
+    });
+  }
 }
+
 export async function getPatientDetailsByID(req, res) {
   try {
     const { id } = req.params;

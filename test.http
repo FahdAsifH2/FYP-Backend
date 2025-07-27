@@ -1,4 +1,7 @@
-POST http://localhost:5001/api/patients/putPatients
+POST http://localhost:5001/api/patients/putPatients          // this create patient
+GET  http://localhost:5001/api/patients/getPatientDetails/id //This will get us any specefic patients data
+
+
 Content-Type: application/json
 
 {
