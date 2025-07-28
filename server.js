@@ -27,6 +27,11 @@ app.use(express.json());
 app.use("/api/Doctors", DoctorRoutes);
 
 
+app.get("/api/patients/putPatinets",(req,res)=>{
+  console.log("This patient Route")
+})
+
+
 
 
 
