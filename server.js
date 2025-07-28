@@ -2,7 +2,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import { sql } from "./db.js";
-import transactions from "./routes/transactions.js";
 import patientsRoutes from "./routes/patientsRoutes.js";
 import {  initPaitentsDB } from "./initDB.js";
 import { tool } from "@langchain/core/tools";
@@ -22,7 +21,7 @@ const app = express();
 
 initPaitentsDB();
 
-// ✅ Middleware
+//  Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/api/patients", patientsRoutes);
@@ -30,5 +29,5 @@ app.use("/api/patients", patientsRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+  console.log(` Server running at http://localhost:${PORT}`);
 });
