@@ -23,6 +23,9 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/patients", patientsRoutes);
 
+
+
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(" ");
