@@ -11,5 +11,6 @@ const router =express.Router()
 router.post('/putPatients',createPatient)
 router.get('/getPatientsNames',GetAllPatientByName)
 router.get('/getPatientDetails/:id',getPatientDetailsByID)
+router.get('/putPatients',createPatient)
 
 export default router
