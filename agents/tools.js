@@ -10,7 +10,7 @@ export const add = tool(async ({ a, b }) => a + b, {
 });
 
 // Subtract tool
-export const subtract = tool(async ({ a, b }) => a - b, {
+export const subtract = tool(async ({ a, b }) => a - b,{
   name: "subtract",
   description: "Subtract two numbers",
   schema: z.object({ a: z.number(), b: z.number() }),

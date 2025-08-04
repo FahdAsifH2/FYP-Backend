@@ -6,19 +6,20 @@ import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { allTools } from "./tools.js";
 
-// ✅ LLM + Tools
+//  LLM + Tools
+
 const llm = new ChatOllama({
   model: "llama3.1:8b",
   baseUrl: "http://localhost:11434",
   temperature: 0,
 });
-const tools = allTools; // ✅ No nesting
+const tools = allTools; // No nesting
 
 // Only do this if needed later for object lookup
 const toolsByName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
 
 // For binding to the LLM, use the array (NOT the object)
-const llmWithTools = llm.bindTools(tools); // ✅ Correct
+const llmWithTools = llm.bindTools(tools); //  Correct
 
 
 // Nodes
