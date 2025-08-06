@@ -12,8 +12,6 @@ import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { runAgent } from "./agents/agentPrototype.js";
 import DoctorRoutes from "./routes/DoctorRoutes.js";
-
-
 import cors from "cors";
 
 dotenv.config();
@@ -21,22 +19,19 @@ const app = express();
 
 initPaitentsDB();
 
-//  Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/api/Doctors", DoctorRoutes);
 
 
-app.get("/api/patients/putPatinets",(req,res)=>{
-  console.log("This patient Route")
-})
-
-
-
-
-
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
+
+// CRITICAL FIX: Listen on all network interfaces (0.0.0.0)
+app.listen(PORT, '0.0.0.0', () => {
   console.log(" ");
-  console.log(` Server running at http://localhost:${PORT}`);
+  console.log(`Server running at:`);
+  console.log(`- Local: http://localhost:${PORT}`);
+  console.log(`- Network: http://192.168.31.188:${PORT}`);
+  console.log(" ");
 });

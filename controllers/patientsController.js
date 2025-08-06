@@ -95,3 +95,69 @@ export async function getPatientDetailsByID(req, res) {
     res.status(500).json({ message: "Failed to retrieve patient info" });
   }
 }
+
+
+export async function PredictPregnancy(req, res) {
+
+
+  try
+  {
+   const data = req.body
+
+   const FastApiResponse=await  fetch('http://localhost:8000/predict',{
+    method: 'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+   })
+
+   console.log(data)
+
+   if(FastApiResponse!=200 || FastApiResponse!=201)
+   {
+    const errorResp = await FastApiResponse.text()
+    res.status(500).json({message: errorResp})
+   }
+   else
+   {
+    const Done = await FastApiResponse.text()
+    res.status(200).json({message:"done"})
+   }
+  }
+  catch(e)
+  {
+    console.error(e)
+    res.status(500).json(e)
+  }
+  // console.log("worked");
+  // const data = req.body;
+  // console.log(data);
+
+  // const {
+  //   age_years,
+
+  //   parity,
+  //   gestation_weeks,
+  //   previous_cs_count,
+  //   gravida,
+  //   robson_group,
+  //   age_19_or_less,
+  //   age_20_34_years,
+  //   age_35_plus_years,
+  //   robson_nulliparous,
+  //   robson_multiparous,
+  //   presentation_cephalic,
+  //   presentation_breech,
+  //   labour_onset_spontaneous,
+  //   induction_of_labour,
+  //   cs_before_labour,
+  //   fetal_heart_present,
+  //   single_baby,
+  //   multiple_babies,
+  //   number_of_fetuses,
+  //   term_37_41_weeks,
+  //   no_previous_scar,
+  //   previous_scar,
+  // } = req.body;
+
+  // res.status(200);
+}
