@@ -98,66 +98,60 @@ export async function getPatientDetailsByID(req, res) {
 
 
 export async function PredictPregnancy(req, res) {
+  try {
+    const data = req.body;
+    console.log('Received data from React Native:', data);
 
+    // Forward to FastAPI
+    const fastApiResponse = await fetch('http://localhost:8000/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
 
-  try
-  {
-   const data = req.body
+    console.log('FastAPI Response Status:', fastApiResponse.status);
 
-   const FastApiResponse=await  fetch('http://localhost:8000/predict',{
-    method: 'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(data)
-   })
+    if (!fastApiResponse.ok) {
+      const errorText = await fastApiResponse.text();
+      console.error('FastAPI Error:', errorText);
+      return res.status(500).json({
+        error: true,
+        message: `FastAPI Error: ${errorText}`
+      });
+    }
 
-   console.log(data)
+    // Get the JSON response from FastAPI
+    const predictionResult = await fastApiResponse.json();
+    console.log('FastAPI Result:', predictionResult);
 
-   if(FastApiResponse!=200 || FastApiResponse!=201)
-   {
-    const errorResp = await FastApiResponse.text()
-    res.status(500).json({message: errorResp})
-   }
-   else
-   {
-    const Done = await FastApiResponse.text()
-    res.status(200).json({message:"done"})
-   }
+    // Transform FastAPI response to match React Native expectations
+    const transformedResponse = {
+      // Map field names to what React Native expects
+      prediction: predictionResult.predicted_delivery_mode || 'Unknown',
+      confidence: predictionResult.confidence_percentage ? predictionResult.confidence_percentage / 100 : 0,
+      probabilities: {},
+      risk_factors: predictionResult.risk_factors || {},
+      model_used: predictionResult.model_used || 'XGBoost'
+    };
+
+    // Extract probabilities from percentage fields
+    Object.keys(predictionResult).forEach(key => {
+      if (key.endsWith('_percentage')) {
+        const deliveryMode = key.replace('_percentage', '');
+        transformedResponse.probabilities[deliveryMode] = predictionResult[key] / 100;
+      }
+    });
+
+    console.log('Sending transformed response to React Native:', transformedResponse);
+
+    // Return in the format React Native expects
+    res.status(200).json(transformedResponse);
+
+  } catch (error) {
+    console.error('Middleware Error:', error);
+    res.status(500).json({
+      error: true,
+      message: `Server Error: ${error.message}`
+    });
   }
-  catch(e)
-  {
-    console.error(e)
-    res.status(500).json(e)
-  }
-  // console.log("worked");
-  // const data = req.body;
-  // console.log(data);
-
-  // const {
-  //   age_years,
-
-  //   parity,
-  //   gestation_weeks,
-  //   previous_cs_count,
-  //   gravida,
-  //   robson_group,
-  //   age_19_or_less,
-  //   age_20_34_years,
-  //   age_35_plus_years,
-  //   robson_nulliparous,
-  //   robson_multiparous,
-  //   presentation_cephalic,
-  //   presentation_breech,
-  //   labour_onset_spontaneous,
-  //   induction_of_labour,
-  //   cs_before_labour,
-  //   fetal_heart_present,
-  //   single_baby,
-  //   multiple_babies,
-  //   number_of_fetuses,
-  //   term_37_41_weeks,
-  //   no_previous_scar,
-  //   previous_scar,
-  // } = req.body;
-
-  // res.status(200);
 }
