@@ -32,6 +32,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(" ");
   console.log(`Server running at:`);
   console.log(`- Local: http://localhost:${PORT}`);
-  console.log(`- Network: http://192.168.31.188:${PORT}`);
+  console.log(`- Network: http://192.168.100.67:${PORT}`);
   console.log(" ");
 });
