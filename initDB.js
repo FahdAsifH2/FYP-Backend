@@ -64,7 +64,9 @@ import { sql } from "./db.js";
           name VARCHAR(100) NOT NULL,
           email VARCHAR(100) UNIQUE NOT NULL,
           password_hash TEXT NOT NULL,
-          role VARCHAR(50) DEFAULT 'user'
+          role VARCH
+          
+          AR(50) DEFAULT 'user'
             CHECK (role IN ('user', 'admin', 'doctor')),
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -74,4 +76,107 @@ import { sql } from "./db.js";
       console.error("❌ Error creating users table:", e);
     }
   }
+  
+  // Initialize comprehensive Antenatal Cards table
+  export async function initAntenatalCards() {
+    try {
+      await sql`
+        CREATE TABLE IF NOT EXISTS antenatal_cards (
+          id SERIAL PRIMARY KEY,
+          
+          -- Patient Information
+          patient_name VARCHAR(255),
+          guardian_name VARCHAR(255),
+          guardian_type VARCHAR(100),
+          age INT,
+          married_since VARCHAR(50),
+          cousin_marriage BOOLEAN DEFAULT FALSE,
+          address TEXT,
+          tel VARCHAR(50),
+          blood_group VARCHAR(10),
+          husband_name VARCHAR(255),
+          husband_blood_group VARCHAR(10),
+          patient_occupation VARCHAR(255),
+          husband_occupation VARCHAR(255),
+          ref_by VARCHAR(255),
+          form_date DATE,
+          p_field VARCHAR(50),
+          
+          -- Medical Information
+          complaints TEXT,
+          lmp DATE,
+          edd DATE,
+          risk_factors TEXT,
+          medications TEXT,
+          surgical_history TEXT,
+          diagnosis TEXT,
+          plan TEXT,
+          additional_notes TEXT,
+          
+          -- Vitals
+          height VARCHAR(20),
+          weight VARCHAR(20),
+          bp VARCHAR(50),
+          pallor VARCHAR(100),
+          thyroid_normal BOOLEAN DEFAULT TRUE,
+          thyroid_notes TEXT,
+          edema VARCHAR(100),
+          edema_location VARCHAR(255),
+          chest_findings TEXT,
+          breasts TEXT,
+          
+          -- Scan Information
+          scan_edd DATE,
+          scan_pa VARCHAR(100),
+          scan_ps VARCHAR(100),
+          scan_bimanual TEXT,
+          
+          -- Gynae History
+          regular BOOLEAN DEFAULT FALSE,
+          irregular BOOLEAN DEFAULT FALSE,
+          pco BOOLEAN DEFAULT FALSE,
+          hirsutism BOOLEAN DEFAULT FALSE,
+          pap_smear BOOLEAN DEFAULT FALSE,
+          contraception BOOLEAN DEFAULT FALSE,
+          
+          -- Family History
+          family_dm BOOLEAN DEFAULT FALSE,
+          family_htn BOOLEAN DEFAULT FALSE,
+          family_cancer BOOLEAN DEFAULT FALSE,
+          family_twins BOOLEAN DEFAULT FALSE,
+          family_special_child BOOLEAN DEFAULT FALSE,
+          family_thalassemia BOOLEAN DEFAULT FALSE,
+          
+          -- Medical History
+          drug_allergy BOOLEAN DEFAULT FALSE,
+          chicken_pox BOOLEAN DEFAULT FALSE,
+          medical_htn BOOLEAN DEFAULT FALSE,
+          medical_dm BOOLEAN DEFAULT FALSE,
+          medical_thyroid BOOLEAN DEFAULT FALSE,
+          medical_others BOOLEAN DEFAULT FALSE,
+          
+          -- Scan Types
+          booking_scan BOOLEAN DEFAULT FALSE,
+          nt_scan BOOLEAN DEFAULT FALSE,
+          anomaly_scan BOOLEAN DEFAULT FALSE,
+          scan_28_weeks BOOLEAN DEFAULT FALSE,
+          scan_34_weeks BOOLEAN DEFAULT FALSE,
+          term_scan BOOLEAN DEFAULT FALSE,
+          
+          -- JSON Data
+          obstetric_history JSONB,
+          investigations JSONB,
+          
+          -- Metadata
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `;
+      console.log("✅ Antenatal cards table created successfully");
+    } catch (error) {
+      console.error("❌ Error creating antenatal_cards table:", error);
+    }
+  }
+  
+
   

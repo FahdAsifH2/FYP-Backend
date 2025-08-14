@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { sql } from "./db.js";
 import patientsRoutes from "./routes/DoctorRoutes.js";
-import { initPaitentsDB } from "./initDB.js";
+import { initAntenatalCards, initPaitentsDB } from "./initDB.js";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { ChatOllama } from "@langchain/ollama";
@@ -18,6 +18,7 @@ dotenv.config();
 const app = express();
 
 initPaitentsDB();
+initAntenatalCards();
 
 // Middleware
 app.use(cors());
