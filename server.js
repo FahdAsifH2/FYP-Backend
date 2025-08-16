@@ -2,37 +2,65 @@
 import express from "express";
 import dotenv from "dotenv";
 import { sql } from "./db.js";
-import patientsRoutes from "./routes/DoctorRoutes.js";
 import { initAntenatalCards, initPaitentsDB } from "./initDB.js";
-import { tool } from "@langchain/core/tools";
-import { z } from "zod";
-import { ChatOllama } from "@langchain/ollama";
-import { AIMessage } from "@langchain/core/messages";
-import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
-import { ToolNode } from "@langchain/langgraph/prebuilt";
-import { runAgent } from "./agents/agentPrototype.js";
 import DoctorRoutes from "./routes/DoctorRoutes.js";
 import cors from "cors";
 
 dotenv.config();
 const app = express();
 
-initPaitentsDB();
-initAntenatalCards();
-
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: false,
+    methods:["GET","POST"]
+  })
+);
 app.use(express.json());
+
+// Routes
 app.use("/api/Doctors", DoctorRoutes);
 
+// Test connection function
+async function testConnection() {
+  try {
+    await sql`SELECT 1 as test`;
+    console.log("✅ Database connection working");
+    return true;
+  } catch (error) {
+    console.error("❌ Database connection failed:", error.message);
+    return false;
+  }
+}
+
+// Create schema with connection test
+async function createSchema() {
+  const isConnected = await testConnection();
+
+  if (!isConnected) {
+    console.log("⚠️ Skipping schema creation due to connection issues");
+    return;
+  }
+
+  try {
+    await initPaitentsDB();
+    await initAntenatalCards();
+    console.log("✅ Database schema initialized successfully");
+  } catch (err) {
+    console.error("❌ Database initialization failed:", err);
+  }
+}
 
 const PORT = process.env.PORT || 5001;
 
-// CRITICAL FIX: Listen on all network interfaces (0.0.0.0)
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(" ");
+// Start server
+app.listen(PORT, "0.0.0.0", async () => {
+  console.log("\n=========================================");
   console.log(`Server running at:`);
-  console.log(`- Local: http://localhost:${PORT}`);
+  console.log(`- Local:   http://localhost:${PORT}`);
   console.log(`- Network: http://192.168.100.67:${PORT}`);
-  console.log(" ");
+  console.log("=========================================\n");
+
+  await createSchema();
 });

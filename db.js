@@ -1,6 +1,9 @@
-import {neon} from "@neondatabase/serverless"
-import dotenv from "dotenv"
+import { neon } from "@neondatabase/serverless";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-export const sql= neon(process.env.DATABASE_URL)
+export const sql = neon(process.env.DATABASE_URL, {
+  fetchConnectionCache: true, // Cache connections
+  fullResults: false, // Faster responses
+});
