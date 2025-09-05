@@ -1,6 +1,6 @@
 import express from "express";
 import { sql } from "../db.js";
-import { PutAppointments, createPatient } from "../controllers/patientsController.js";
+import { GetAppointments, PutAppointments, createPatient } from "../controllers/patientsController.js";
 import { GetAllPatientByName } from "../controllers/patientsController.js";
 import { getPatientDetailsByID } from "../controllers/patientsController.js";
 import { PredictPregnancy } from "../controllers/patientsController.js";
@@ -13,8 +13,7 @@ router.get("/getPatientDetails/:id", getPatientDetailsByID);
 router.get("/putPatients", createPatient);
 router.post("/PredictPregnancy", PredictPregnancy);
 router.post("/appointments",PutAppointments);
-
-
+router.get("GetTomorrowsAppointments",GetAppointments)
 
 
 

@@ -27,22 +27,6 @@ app.use(express.json());
 // Routes
 app.use("/api/Doctors", DoctorRoutes);
 
-app.get("/getAppointments", async (req, res) => {
-  try {
-    const response = await sql`
-    SELECT * 
-    FROM appointments
-    WHERE appointment_date::date = CURRENT_DATE + INTERVAL '2 day'
-    ORDER BY appointment_date;
-    
-    `;
-    res.json(response);
-    console.log(response);
-    console.log("Appointments Retrived");
-  } catch (error) {
-    res.status(500).json({ message: "Error with Appointments" });
-  }
-});
 
 // Create schema with connection test
 async function createSchema() {
