@@ -2,9 +2,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import { sql } from "./db.js";
-import { initAntenatalCards, initPaitentsDB } from "./initDB.js";
+import {
+  initAntenatalCards,
+  initAppointments,
+  initPaitentsDB,
+} from "./initDB.js";
 import DoctorRoutes from "./routes/DoctorRoutes.js";
 import cors from "cors";
+import { SqlTemplate } from "@neondatabase/serverless";
 
 dotenv.config();
 const app = express();
@@ -14,7 +19,7 @@ app.use(
   cors({
     origin: "*",
     credentials: false,
-    methods:["GET","POST"]
+    methods: ["GET", "POST"],
   })
 );
 app.use(express.json());
@@ -22,30 +27,35 @@ app.use(express.json());
 // Routes
 app.use("/api/Doctors", DoctorRoutes);
 
-// Test connection function
-async function testConnection() {
+app.get("/api/Doctors/appointments", async (req, res) => {
   try {
-    await sql`SELECT 1 as test`;
-    console.log("✅ Database connection working");
-    return true;
-  } catch (error) {
-    console.error("❌ Database connection failed:", error.message);
-    return false;
+    const {
+      patientName,
+      appointmentDate,
+      appointmentTime,
+      appointmentType,
+      issues,
+    } = req.body;
+    await sql`
+    INSERT INTO APPOINTMENTS (patient_name,appointment_date,appointment_time,appointment_type,issue)
+    VALUES (${patientName},${appointmentDate},${appointmentTime},${appointmentType},${issues})
+
+    `;
+    res.status(201).json({ message: "Appointment added" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error" });
   }
-}
+});
 
 // Create schema with connection test
 async function createSchema() {
-  const isConnected = await testConnection();
 
-  if (!isConnected) {
-    console.log("⚠️ Skipping schema creation due to connection issues");
-    return;
-  }
 
   try {
     await initPaitentsDB();
     await initAntenatalCards();
+    await initAppointments();
     console.log("✅ Database schema initialized successfully");
   } catch (err) {
     console.error("❌ Database initialization failed:", err);

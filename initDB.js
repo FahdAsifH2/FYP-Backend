@@ -192,9 +192,28 @@ export async function initAntenatalCards() {
 
     console.log("✅ Obstetric history table created");
     console.log("✅ All antenatal tables created successfully");
-
   } catch (error) {
     console.error("❌ Error creating antenatal_cards table:", error);
     throw error; // Re-throw to trigger retry logic
+  }
+}
+
+export async function initAppointments() {
+  try {
+    await sql`
+    CREATE TABLE IF NOT EXISTS Appointments (
+      id SERIAL PRIMARY KEY,
+      appointment_date DATE,
+      appointment_time TIME,
+      appointment_type VARCHAR(200),
+      issue VARCHAR(200),
+      patient_name VARCHAR(200)
+  );
+  
+   `;
+
+    console.log("Patients Table made sucessfully");
+  } catch (error) {
+    console.log(err);
   }
 }
