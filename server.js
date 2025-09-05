@@ -27,38 +27,29 @@ app.use(express.json());
 // Routes
 app.use("/api/Doctors", DoctorRoutes);
 
-app.get("/api/Doctors/appointments", async (req, res) => {
+app.get("/getAppointments", async (req,res) => {
   try {
-    const {
-      patientName,
-      appointmentDate,
-      appointmentTime,
-      appointmentType,
-      issues,
-    } = req.body;
-    await sql`
-    INSERT INTO APPOINTMENTS (patient_name,appointment_date,appointment_time,appointment_type,issue)
-    VALUES (${patientName},${appointmentDate},${appointmentTime},${appointmentType},${issues})
-
+    const response = await sql`
+    SELECT * FROM appointments ORDER BY appointment_date
     `;
-    res.status(201).json({ message: "Appointment added" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error" });
+    res.json(response);
+    console.log(response)
+    console.log("Appointments Retrived");
+  } catch (error) {
+
+    res.status(500).json({message:"Error with Appointments"})
   }
 });
 
 // Create schema with connection test
 async function createSchema() {
-
-
   try {
     await initPaitentsDB();
     await initAntenatalCards();
     await initAppointments();
-    console.log("✅ Database schema initialized successfully");
+    console.log("Database schema initialized successfully");
   } catch (err) {
-    console.error("❌ Database initialization failed:", err);
+    console.error("Database initialization failed:", err);
   }
 }
 

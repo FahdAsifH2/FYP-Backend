@@ -96,6 +96,27 @@ export async function getPatientDetailsByID(req, res) {
   }
 }
 
+export async function PutAppointments(req,res)
+{
+  try {
+    const {
+      patientName,
+      appointmentDate,
+      appointmentTime,
+      appointmentType,
+      issue,
+    } = req.body;
+    await sql`
+    INSERT INTO APPOINTMENTS (patient_name,appointment_date,appointment_time,appointment_type,issue)
+    VALUES (${patientName},${appointmentDate},${appointmentTime},${appointmentType},${issue})
+
+    `;
+    res.status(201).json({ message: "Appointment added" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error" });
+  }
+}
 
 export async function PredictPregnancy(req, res) {
   try {
