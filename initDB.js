@@ -51,10 +51,8 @@ export async function initUser() {
           name VARCHAR(100) NOT NULL,
           email VARCHAR(100) UNIQUE NOT NULL,
           password_hash TEXT NOT NULL,
-          role VARCH
-          
-          AR(50) DEFAULT 'user'
-            CHECK (role IN ('user', 'admin', 'doctor')),
+          role VARCHAR(50) DEFAULT 'user'
+            CHECK (role IN ('user', 'admin', 'doctor', 'patient')),
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `;

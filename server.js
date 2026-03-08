@@ -6,7 +6,9 @@ import {
   initAntenatalCards,
   initAppointments,
   initPaitentsDB,
+  initUser,
 } from "./initDB.js";
+import authRoutes from "./routes/authRoutes.js";
 import DoctorRoutes from "./routes/DoctorRoutes.js";
 import cors from "cors";
 import { SqlTemplate } from "@neondatabase/serverless";
@@ -25,12 +27,14 @@ app.use(
 app.use(express.json());
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/Doctors", DoctorRoutes);
 
 
 // Create schema with connection test
 async function createSchema() {
   try {
+    await initUser();
     await initPaitentsDB();
     await initAntenatalCards();
     await initAppointments();
