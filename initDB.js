@@ -199,19 +199,124 @@ export async function initAntenatalCards() {
 export async function initAppointments() {
   try {
     await sql`
-    CREATE TABLE IF NOT EXISTS Appointments (
+    CREATE TABLE IF NOT EXISTS appointments (
       id SERIAL PRIMARY KEY,
-      appointment_date DATE,
-      appointment_time TIME,
+      patient_id INT REFERENCES users(id) ON DELETE CASCADE,
+      doctor_id INT REFERENCES users(id) ON DELETE CASCADE,
+      patient_name VARCHAR(200),
+      doctor_name VARCHAR(200),
+      appointment_date DATE NOT NULL,
+      appointment_time TIME NOT NULL,
       appointment_type VARCHAR(200),
-      issue VARCHAR(200),
-      patient_name VARCHAR(200)
-  );
-  
-   `;
-
-    console.log("Patients Table made sucessfully");
+      issue TEXT,
+      status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')),
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    `;
+    // Migrate old table: add missing columns if they don't exist
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS patient_id INT REFERENCES users(id) ON DELETE CASCADE`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS doctor_id INT REFERENCES users(id) ON DELETE CASCADE`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS doctor_name VARCHAR(200)`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending'`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS notes TEXT`;
+    await sql`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`;
+    // Add check constraint if missing (ignore error if already exists)
+    try {
+      await sql`ALTER TABLE appointments ADD CONSTRAINT appointments_status_check CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled'))`;
+    } catch (_) { /* constraint already exists */ }
+    console.log("✅ Appointments table ready");
   } catch (error) {
-    console.log(err);
+    console.log("❌ Error creating appointments table:", error);
+  }
+}
+
+export async function initDoctorPatientRelationships() {
+  try {
+    await sql`
+    CREATE TABLE IF NOT EXISTS doctor_patient_relationships (
+      id SERIAL PRIMARY KEY,
+      doctor_id INT REFERENCES users(id) ON DELETE CASCADE,
+      patient_id INT REFERENCES users(id) ON DELETE CASCADE,
+      doctor_name VARCHAR(200),
+      patient_name VARCHAR(200),
+      status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'pending')),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(doctor_id, patient_id)
+    );
+    `;
+    console.log("✅ Doctor-Patient relationships table created");
+  } catch (error) {
+    console.log("❌ Error creating relationships table:", error);
+  }
+}
+
+export async function initHealthProfiles() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS health_profiles (
+        id                 SERIAL PRIMARY KEY,
+        user_id            INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        name               VARCHAR(255),
+        age                INT,
+        height             VARCHAR(20),
+        weight             VARCHAR(20),
+        gravida            INT,
+        blood_group        VARCHAR(10),
+        diabetes           BOOLEAN DEFAULT FALSE,
+        previous_c_section BOOLEAN DEFAULT FALSE,
+        allergies          TEXT,
+        medical_conditions TEXT,
+        created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log("✅ Health profiles table created (or already exists).");
+  } catch (error) {
+    console.error("❌ Error creating health_profiles table:", error);
+  }
+}
+
+export async function initSymptomLogs() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS symptom_logs (
+        id          SERIAL PRIMARY KEY,
+        user_id     INT REFERENCES users(id) ON DELETE CASCADE,
+        symptoms    TEXT NOT NULL,
+        notes       TEXT,
+        logged_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (user_id, logged_date)
+      )
+    `;
+    console.log("✅ Symptom logs table created (or already exists).");
+  } catch (error) {
+    console.error("❌ Error creating symptom_logs table:", error);
+  }
+}
+
+export async function initDocuments() {
+  try {
+    await sql`
+    CREATE TABLE IF NOT EXISTS documents (
+      id SERIAL PRIMARY KEY,
+      patient_id INT REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(500) NOT NULL,
+      description TEXT,
+      file_name VARCHAR(500) NOT NULL,
+      file_type VARCHAR(100),
+      file_size INT,
+      file_data TEXT NOT NULL,
+      category VARCHAR(100) DEFAULT 'general' CHECK (category IN ('lab_report', 'ultrasound', 'prescription', 'discharge_summary', 'general', 'blood_work', 'scan')),
+      shared_with_doctor BOOLEAN DEFAULT FALSE,
+      doctor_id INT REFERENCES users(id) ON DELETE SET NULL,
+      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    `;
+    console.log("✅ Documents table created");
+  } catch (error) {
+    console.log("❌ Error creating documents table:", error);
   }
 }
