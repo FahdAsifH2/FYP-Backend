@@ -25,17 +25,24 @@ dotenv.config();
 // ─────────────────────────────────────────────────────────────────────────────
 
 let _ollamaAvailable = null;
+let _ollamaLastCheck = 0;
+const OLLAMA_CACHE_TTL_MS = 30000; // re-check every 30s instead of caching forever
 
 async function checkOllamaAvailable() {
-  if (_ollamaAvailable !== null) return _ollamaAvailable;
+  const now = Date.now();
+  if (_ollamaAvailable !== null && (now - _ollamaLastCheck) < OLLAMA_CACHE_TTL_MS) {
+    return _ollamaAvailable;
+  }
   try {
     const base = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
     await axios.get(`${base}/api/tags`, { timeout: 3000 });
     _ollamaAvailable = true;
-    console.log("🦙 Ollama detected — using as primary LLM");
+    _ollamaLastCheck = now;
+    console.log("🦙 Ollama detected");
   } catch {
     _ollamaAvailable = false;
-    console.log("🔁 Ollama not reachable — falling back to Gemini");
+    _ollamaLastCheck = now;
+    console.log("⚠️  Ollama not reachable at", process.env.OLLAMA_BASE_URL || "http://localhost:11434");
   }
   return _ollamaAvailable;
 }
@@ -64,15 +71,10 @@ async function callGemini(prompt) {
 
 async function callLLM(prompt) {
   const useOllama = await checkOllamaAvailable();
-  if (useOllama) {
-    try {
-      return await callOllama(prompt);
-    } catch (err) {
-      console.warn("Ollama call failed, falling back to Gemini:", err.message);
-      _ollamaAvailable = false;
-    }
+  if (!useOllama) {
+    throw new Error("Ollama is not reachable. Make sure Ollama is running on this machine (ollama serve).");
   }
-  return await callGemini(prompt);
+  return await callOllama(prompt);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
