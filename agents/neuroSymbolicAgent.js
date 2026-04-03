@@ -15,7 +15,6 @@
  */
 
 import axios from "axios";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSession } from "../neo4j.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -58,16 +57,6 @@ async function callOllama(prompt) {
   return response.data.response;
 }
 
-async function callGemini(prompt) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === "YOUR_GEMINI_API_KEY_HERE") {
-    throw new Error("Gemini API key not configured. Set GEMINI_API_KEY in .env");
-  }
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  const result = await model.generateContent(prompt);
-  return result.response.text();
-}
 
 async function callLLM(prompt) {
   const useOllama = await checkOllamaAvailable();
