@@ -19,7 +19,9 @@ import relationshipRoutes from "./routes/relationshipRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import healthProfileRoutes from "./routes/healthProfileRoutes.js";
 import symptomRoutes from "./routes/symptomRoutes.js";
+import chatbotRoutes from "./routes/chatbotRoutes.js";
 import cors from "cors";
+import { testNeo4jConnection } from "./neo4j.js";
 
 dotenv.config();
 const app = express();
@@ -43,6 +45,7 @@ app.use("/api/relationships", relationshipRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/health-profile", healthProfileRoutes);
 app.use("/api/symptoms", symptomRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 // Create schema with connection test
 async function createSchema() {
@@ -72,4 +75,5 @@ app.listen(PORT, "0.0.0.0", async () => {
   console.log("=========================================\n");
 
   await createSchema();
+  await testNeo4jConnection();
 });

@@ -161,7 +161,7 @@ export async function initAntenatalCards() {
     await sql`
       CREATE TABLE IF NOT EXISTS investigations (
         id SERIAL PRIMARY KEY,
-        antenatal_card_id INT REFERENCES antenatal_cards(id) ON DELETE CASCADE,
+        antenatal_id INT REFERENCES antenatal_cards(id) ON DELETE CASCADE,
         test VARCHAR(100),
         test_date VARCHAR(100),
         hb VARCHAR(100),
@@ -177,7 +177,7 @@ export async function initAntenatalCards() {
     await sql`
       CREATE TABLE IF NOT EXISTS obstetric_history (
         id SERIAL PRIMARY KEY,
-        antenatal_card_id INT REFERENCES antenatal_cards(id) ON DELETE CASCADE,
+        antenatal_id INT REFERENCES antenatal_cards(id) ON DELETE CASCADE,
         years INT,
         term INT,
         mod VARCHAR(100),
